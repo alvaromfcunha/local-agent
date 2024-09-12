@@ -1,0 +1,9 @@
+services:
+    database:
+        image: pgvector/pgvector:pg16
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: Zky@l%vq8x$7(Hz
+            POSTGRES_DB: local_agent
+        ports:
+            - 5432:5432

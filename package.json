@@ -1,0 +1,31 @@
+{
+    "name": "local-agent",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "test": "jest --silent",
+        "build": "tsc",
+        "start": "NODE_PATH=./dist node ./dist/cmd/api/index.js"
+    },
+    "author": "",
+    "license": "ISC",
+    "description": "",
+    "type": "commonjs",
+    "devDependencies": {
+        "@types/express": "^4.17.21",
+        "@types/node": "^22.5.4",
+        "dotenv": "^16.4.5",
+        "jest": "^29.7.0",
+        "ts-jest": "^29.2.5",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.6.2"
+    },
+    "dependencies": {
+        "express": "^5.0.0",
+        "langchain": "^0.2.18",
+        "pg": "^8.4.0",
+        "reflect-metadata": "^0.1.13",
+        "typeorm": "^0.3.20",
+        "zod": "^3.23.8"
+    }
+}
