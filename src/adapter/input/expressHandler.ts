@@ -5,7 +5,7 @@ export interface ExpressHandler {
 }
 
 export class ExpressResponse {
-    public static error(code: string, message?: unknown) {
+    public static error(code: string, message?: string) {
         return {
             code,
             message,
