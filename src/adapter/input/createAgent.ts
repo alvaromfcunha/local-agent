@@ -1,16 +1,16 @@
 import {
     CreateAgentUseCase,
     CreateAgentUseCaseInput,
-} from "domain/useCase/createAgentUseCase";
+} from "domain/useCase/createAgent";
 import { ExpressHandler, ExpressResponse } from "./expressHandler";
 import { Request, Response } from "express";
 import { z, ZodError } from "zod";
 
-const CreateAgentRequestSchema = z.object({
+const createAgentRequestSchema = z.object({
     name: z.string(),
 });
 
-type CreateAgentRequest = z.infer<typeof CreateAgentRequestSchema>;
+type CreateAgentRequest = z.infer<typeof createAgentRequestSchema>;
 
 export class CreateAgentHandler implements ExpressHandler {
     constructor(private useCase: CreateAgentUseCase) {}
@@ -21,7 +21,7 @@ export class CreateAgentHandler implements ExpressHandler {
                 name: req.body.name,
             };
 
-            CreateAgentRequestSchema.parse(request);
+            createAgentRequestSchema.parse(request);
 
             const input: CreateAgentUseCaseInput = {
                 name: request.name,
@@ -44,7 +44,7 @@ export class CreateAgentHandler implements ExpressHandler {
                 return;
             }
 
-            console.error("Cannot handle create agent event", error);
+            console.error("Cannot handle create agent request", error);
             res.status(500).send(ExpressResponse.error("INTERNAL_ERROR"));
             return;
         }

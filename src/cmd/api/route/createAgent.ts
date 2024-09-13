@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { DataSource } from "typeorm";
 import { AgentRepository } from "adapter/output/repository/agentRepository";
 import { CreateAgentHandler } from "adapter/input/createAgent";
-import { CreateAgentUseCase } from "domain/useCase/createAgentUseCase";
+import { CreateAgentUseCase } from "domain/useCase/createAgent";
 
 export const createAgentRoute =
     (dataSource: DataSource) => async (req: Request, res: Response) => {

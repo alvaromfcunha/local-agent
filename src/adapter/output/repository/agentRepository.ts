@@ -17,4 +17,27 @@ export class AgentRepository implements IAgentRepository {
             throw error;
         }
     }
+
+    public async getById(id: string): Promise<Agent | null> {
+        try {
+            return await this.repository.findOne({ where: { id } });
+        } catch (error) {
+            console.error(`Cannot get agent by id ${id} in database`, error);
+            throw error;
+        }
+    }
+
+    public async update(agent: Agent): Promise<void> {
+        try {
+            await this.repository.update(
+                { id: agent.id },
+                {
+                    status: agent.status,
+                },
+            );
+        } catch (error) {
+            console.error("Cannot update agent in database", error);
+            throw error;
+        }
+    }
 }
