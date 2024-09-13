@@ -1,6 +1,6 @@
 # Local Agent
 
-A local document-based context Question and Anwser multi-agent manager powered by Ollama running llama3.1 on Nvidia CUDA.
+A local document-based context Question and Answer multi-agent manager powered by Ollama running llama3.1 on Nvidia CUDA.
 
 ## Requirements:
 
