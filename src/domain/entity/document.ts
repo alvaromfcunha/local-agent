@@ -14,14 +14,16 @@ export class Document extends BaseEntity {
     public metadata: Record<string, string> | undefined;
 
     @ManyToOne(() => Agent, (agent) => agent.documents)
-    public agent!: Agent;
+    public readonly agent: Agent;
 
     constructor(
+        agent: Agent,
         content: string,
         embedding: string,
         metadata?: Record<string, string>,
     ) {
         super();
+        this.agent = agent;
         this.content = content;
         this.embedding = embedding;
         this.metadata = metadata;

@@ -70,6 +70,7 @@ export class UpdateAgentUseCase
     }
 
     private async trainAgent(agent: Agent, documentsData: DocumentData[]) {
+        console.log("Started training...");
         const embeddings = await this.agentService.createEmbeddings(
             documentsData.map((doc) => doc.content),
         );
@@ -77,6 +78,7 @@ export class UpdateAgentUseCase
         const documents = documentsData.map(
             (document, idx) =>
                 new Document(
+                    agent,
                     document.content,
                     embeddings[idx].join(","),
                     document.metadata,
@@ -86,5 +88,6 @@ export class UpdateAgentUseCase
 
         agent.status = AgentStatus.Trained;
         await this.agentRepository.update(agent);
+        console.log("Finished training!!!");
     }
 }

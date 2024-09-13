@@ -18,7 +18,7 @@ export class CreateAgentHandler implements ExpressHandler {
     public async handle(req: Request, res: Response): Promise<void> {
         try {
             const request: CreateAgentRequest = {
-                name: req.body.name,
+                name: req.body?.name,
             };
 
             createAgentRequestSchema.parse(request);

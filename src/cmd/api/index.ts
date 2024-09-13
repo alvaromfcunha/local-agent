@@ -5,9 +5,11 @@ import { DataSource } from "typeorm";
 import { Agent } from "domain/entity/agent";
 import { Document } from "domain/entity/document";
 import { updateAgentRoute } from "./route/updateAgent";
+import { runAgentRoute } from "./route/runAgent";
+import { Run } from "domain/entity/run";
 
 const api = express();
-api.use(express.json());
+api.use(express.json({ limit: "10mb" }));
 
 const dataSource = new DataSource({
     type: "postgres",
@@ -16,11 +18,12 @@ const dataSource = new DataSource({
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
     port: 5432,
-    entities: [Agent, Document],
+    entities: [Agent, Document, Run],
 });
 
 api.post("/agents", createAgentRoute(dataSource));
 api.patch("/agents/:agentId", updateAgentRoute(dataSource));
+api.post("/agents/:agentId/run", runAgentRoute(dataSource));
 
 (async () => {
     await dataSource.initialize();
