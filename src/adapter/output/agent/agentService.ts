@@ -1,6 +1,5 @@
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { Document as LangchainDocument } from "langchain/document";
-import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import { pull } from "langchain/hub";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { createStuffDocumentsChain } from "langchain/chains/combine_documents";
@@ -47,23 +46,6 @@ export class AgentService implements IAgentService {
         question: string,
     ): Promise<string> {
         try {
-            const ollamaEmbeddings = new OllamaEmbeddings({
-                model: process.env.OLLAMA_MODEL,
-                baseUrl: process.env.OLLAMA_URL,
-            });
-
-            const vectorStore = new MemoryVectorStore(ollamaEmbeddings);
-
-            const langchainDocuments = documents.map(
-                (document) =>
-                    new LangchainDocument({
-                        pageContent: document.content,
-                        metadata: document.metadata,
-                    }),
-            );
-
-            vectorStore.addDocuments(langchainDocuments);
-
             const ragPrompt = await pull<ChatPromptTemplate>("rlm/rag-prompt");
             const outputParser = new StringOutputParser();
             const ollamaLlm = new ChatOllama({
@@ -78,17 +60,36 @@ export class AgentService implements IAgentService {
                 outputParser,
             });
 
-            const retriever = vectorStore.asRetriever();
-            const context = await retriever.invoke(question);
+            const langchainDocuments = documents.map(
+                (document) =>
+                    new LangchainDocument({
+                        pageContent: document.content,
+                        metadata: document.metadata,
+                    }),
+            );
 
             const answer = await chain.invoke({
                 question,
-                context,
+                langchainDocuments,
             });
 
             return answer;
         } catch (error) {
             console.error("Cannot run agent in agent service", error);
+            throw error;
+        }
+    }
+
+    public async embedQuery(query: string): Promise<number[]> {
+        try {
+            const ollamaEmbeddings = new OllamaEmbeddings({
+                model: process.env.OLLAMA_MODEL,
+                baseUrl: process.env.OLLAMA_URL,
+            });
+
+            return ollamaEmbeddings.embedQuery(query);
+        } catch (error) {
+            console.error("Cannot embed query in agent service", error);
             throw error;
         }
     }

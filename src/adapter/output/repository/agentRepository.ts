@@ -20,7 +20,7 @@ export class AgentRepository implements IAgentRepository {
 
     public async getById(id: string): Promise<Agent | null> {
         try {
-            return await this.repository.findOne({ where: { id } });
+            return await this.repository.findOne({ where: { id: id } });
         } catch (error) {
             console.error(`Cannot get agent by id ${id} in database`, error);
             throw error;

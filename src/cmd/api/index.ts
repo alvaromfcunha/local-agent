@@ -7,9 +7,11 @@ import { Document } from "domain/entity/document";
 import { updateAgentRoute } from "./route/updateAgent";
 import { runAgentRoute } from "./route/runAgent";
 import { Run } from "domain/entity/run";
+import { loggingMiddleware } from "./middleware/logging";
 
 const api = express();
 api.use(express.json({ limit: "10mb" }));
+api.use(loggingMiddleware);
 
 const dataSource = new DataSource({
     type: "postgres",

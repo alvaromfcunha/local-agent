@@ -5,6 +5,7 @@ import { IAgentService } from "domain/service/agentService";
 import { AgentNotFoundError } from "domain/error/agentNotFound";
 import { AgentStatus } from "domain/entity/enum/agentStatus";
 import { Run } from "domain/entity/run";
+import { IDocumentRepository } from "domain/repository/documentRepository";
 
 export type RunAgentUseCaseInput = {
     agentId: string;
@@ -22,6 +23,7 @@ export class RunAgentUseCase
     constructor(
         private agentRepository: IAgentRepository,
         private runRepository: IRunRepository,
+        private documentRepository: IDocumentRepository,
         private agentService: IAgentService,
     ) {}
 
@@ -35,7 +37,20 @@ export class RunAgentUseCase
             if (agent.status !== AgentStatus.Trained)
                 throw new Error("Action require a trained agent.");
 
-            const documents = await agent.documents;
+            const questionEmbedding = await this.agentService.embedQuery(
+                input.question,
+            );
+
+            const documentsWithScore =
+                await this.documentRepository.similaritySearchVectorWithScore(
+                    agent,
+                    questionEmbedding,
+                    4,
+                );
+
+            const documents = documentsWithScore.map(
+                (documentWithScore) => documentWithScore[0],
+            );
 
             const answer = await this.agentService.runAgent(
                 documents,

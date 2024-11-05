@@ -7,10 +7,10 @@ export class BaseEntity {
     private _: number;
 
     @Column({ name: "external_id", unique: true })
-    public readonly id: string;
+    public id: string;
 
     @Column({ name: "created_at", type: "timestamptz" })
-    public readonly createdAt: Date;
+    public createdAt: Date;
 
     constructor() {
         this.id = randomUUID();

@@ -8,13 +8,17 @@ export class Document extends BaseEntity {
     public content: string;
 
     @Column({ name: "embedding" })
-    public embedding!: string;
+    public embedding: string;
 
     @Column({ name: "metadata", type: "json", nullable: true })
     public metadata: Record<string, string> | undefined;
 
     @ManyToOne(() => Agent, (agent) => agent.documents)
-    public readonly agent: Agent;
+    private _agent: Agent;
+
+    public get agent(): Agent {
+        return this._agent;
+    }
 
     constructor(
         agent: Agent,
@@ -23,9 +27,25 @@ export class Document extends BaseEntity {
         metadata?: Record<string, string>,
     ) {
         super();
-        this.agent = agent;
+        this._agent = agent;
         this.content = content;
         this.embedding = embedding;
         this.metadata = metadata;
+    }
+
+    public static load(
+        id: string,
+        createdAt: Date,
+        agent: Agent,
+        content: string,
+        embedding: string,
+        metadata?: Record<string, string>,
+    ) {
+        const document = new Document(agent, content, embedding, metadata);
+
+        document.id = id;
+        document.createdAt = createdAt;
+
+        return document;
     }
 }

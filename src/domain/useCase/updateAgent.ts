@@ -70,24 +70,33 @@ export class UpdateAgentUseCase
     }
 
     private async trainAgent(agent: Agent, documentsData: DocumentData[]) {
-        console.log("Started training...");
-        const embeddings = await this.agentService.createEmbeddings(
-            documentsData.map((doc) => doc.content),
-        );
+        try {
+            console.log("Started training...");
+            const embeddings = await this.agentService.createEmbeddings(
+                documentsData.map((doc) => doc.content),
+            );
 
-        const documents = documentsData.map(
-            (document, idx) =>
-                new Document(
-                    agent,
-                    document.content,
-                    embeddings[idx].join(","),
-                    document.metadata,
-                ),
-        );
-        await this.documentRepository.createMany(documents);
+            const documents = documentsData.map(
+                (document, idx) =>
+                    new Document(
+                        agent,
+                        document.content,
+                        embeddings[idx].join(","),
+                        document.metadata,
+                    ),
+            );
+            await this.documentRepository.createMany(documents);
 
-        agent.status = AgentStatus.Trained;
-        await this.agentRepository.update(agent);
-        console.log("Finished training!!!");
+            agent.status = AgentStatus.Trained;
+            await this.agentRepository.update(agent);
+            console.log("Finished training!!!");
+        } catch (error) {
+            agent.status = AgentStatus.Errored;
+            await this.agentRepository.update(agent);
+            console.error(
+                "Cannot async train agent in update agent use case",
+                error,
+            );
+        }
     }
 }
